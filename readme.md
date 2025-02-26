@@ -1,11 +1,11 @@
 # Laravel Gmail
 
-[![Build Status](https://scrutinizer-ci.com/g/dacastro4/laravel-gmail/badges/build.png?b=master)](https://scrutinizer-ci.com/g/dacastro4/laravel-gmail/build-status/master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/dacastro4/laravel-gmail/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/dacastro4/laravel-gmail/?branch=master)
-[![GitHub issues](https://img.shields.io/github/issues/dacastro4/laravel-gmail.svg)](https://github.com/dacastro4/laravel-gmail/issues)
-[![Total Downloads](https://poser.pugx.org/dacastro4/laravel-gmail/downloads)](https://packagist.org/packages/dacastro4/laravel-gmail)
-[![Monthly Downloads](https://poser.pugx.org/dacastro4/laravel-gmail/d/monthly)](https://packagist.org/packages/dacastro4/laravel-gmail)
-[![GitHub license](https://img.shields.io/github/license/dacastro4/laravel-gmail.svg)](https://github.com/dacastro4/laravel-gmail/blob/master/LICENSE)
+[![Build Status](https://scrutinizer-ci.com/g/oriceon/laravel-gmail/badges/build.png?b=master)](https://scrutinizer-ci.com/g/oriceon/laravel-gmail/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/oriceon/laravel-gmail/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/oriceon/laravel-gmail/?branch=master)
+[![GitHub issues](https://img.shields.io/github/issues/oriceon/laravel-gmail.svg)](https://github.com/oriceon/laravel-gmail/issues)
+[![Total Downloads](https://poser.pugx.org/oriceon/laravel-gmail/downloads)](https://packagist.org/packages/oriceon/laravel-gmail)
+[![Monthly Downloads](https://poser.pugx.org/oriceon/laravel-gmail/d/monthly)](https://packagist.org/packages/oriceon/laravel-gmail)
+[![GitHub license](https://img.shields.io/github/license/oriceon/laravel-gmail.svg)](https://github.com/oriceon/laravel-gmail/blob/master/LICENSE)
 
 
 # Gmail
@@ -25,15 +25,15 @@ if you need **Laravel 8** compatibility please use version `5.0.x`.
 
 # Installation
 
-Add dacastro4/laravel-gmail to composer.json.
+Add oriceon/laravel-gmail to composer.json.
 
-`"dacastro4/laravel-gmail": "^6.1"`
+`"oriceon/laravel-gmail": "^6.1"`
 
 Run composer update to pull down the latest version.
 
 Or run
 
-`composer require dacastro4/laravel-gmail`
+`composer require oriceon/laravel-gmail`
 
 Now open up `config/app.php` and add the service provider to your providers array.
 
@@ -50,54 +50,6 @@ Now add the alias.
     'LaravelGmail' => Dacastro4\LaravelGmail\Facade\LaravelGmail::class,
 ]
 ```
-
-For laravel >=5.5 that's all. This package supports Laravel new [Package Discovery](https://laravel.com/docs/5.5/packages#package-discovery).
-
-For <= PHP 7.4 compatibility use version `v5.0`
-
-# Migration from 5.0 to 6.0
-
-Requires Laravel 9 and you have to change the dependency to `"laravel/laravel": "^9.0"`
-Please, follow [Upgrading To 9.0 From 8.x Guide](https://laravel.com/docs/9.x/upgrade)
-
-# Migration from 4.0 to 5.0
-
-Requires Laravel 8 and you have to change the dependency to `"laravel/laravel": "^8.0"`
-Please, follow [Upgrading To 8.0 From 7.x Guide](https://laravel.com/docs/8.x/upgrade)
-
-# Migration from 3.0 to 4.0
-
-Requires Laravel 7 and you have to change the dependency to `"laravel/laravel": "^7.0"`
-Please, follow [Upgrading To 7.0 From 6.x Guide](https://laravel.com/docs/7.x/upgrade)
-
-# Migration from 2.0 to 3.0
-
-Requires Laravel 6 and you only have to change the dependency to `"laravel/laravel": "^6.0"`
-
-# Migration from 1.0 to 2.0
-The only changed made was the multi credentials feature.
-- Change your composer.json from `"dacastro4/laravel-gmail": "^1.0"` to `"dacastro4/laravel-gmail": "^2.0"`
-
-I had to change version because of a typo and that might break apps calling those attributes.
-
-All variable with the word "threat" was change to "thread" (yeah, I know.. sorry)
-Ex:
-
- Mail Class
-    `$threatId` => `$threadId`
-
- Replyable Class
-    `$mail->setReplyThreat()` => `$mail->setReplyThread()`
-
-and so on.
-
-# Migration from 0.6 to 1.0
-The only changed made was the multi credentials feature.
-- Change your composer.json from `"dacastro4/laravel-gmail": "^0.6"` to `"dacastro4/laravel-gmail": "^1.0"`
-
-If you don't want the multi user credentials, you don't have to do anything else, if you do, you're going to have to
-login again to create a new credentials file per user.
-
 
 # Configuration
 

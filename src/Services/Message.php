@@ -146,7 +146,12 @@ class Message
 		$messages = [];
 
 		foreach ($messagesBatch as $message) {
-			$messages[] = new Mail($message, false, $this->client->userId);
+    		if ($message instanceof \Google_Service_Gmail_Message) {
+        		$messages[] = new Mail($message, false, $this->client->userId);
+    		} elseif ($message instanceof \Google\Service\Exception) {
+        		// skip errors from batch, continue process
+        		continue;
+    		}
 		}
 
 		return $messages;

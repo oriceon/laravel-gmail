@@ -4,176 +4,184 @@ namespace Dacastro4\LaravelGmail\Services\Message;
 
 use Dacastro4\LaravelGmail\GmailConnection;
 use Dacastro4\LaravelGmail\Traits\HasDecodableBody;
-use Google_Service_Gmail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Attachment extends GmailConnection
 {
-	use HasDecodableBody;
+    use HasDecodableBody;
 
-	/**
-	 * @var
-	 */
-	public $body;
-	/**
-	 * @var
-	 */
-	public $id;
-	/**
-	 * @var
-	 */
-	public $filename;
-	/**
-	 * @var
-	 */
-	public $mimeType;
-	/**
-	 * @var
-	 */
-	public $size;
-	/**
-	 * @var
-	 */
-	public $headerDetails;
-	/**
-	 * @var
-	 */
-	private $headers;
-	/**
-	 * @var Google_Service_Gmail
-	 */
-	private $service;
+    /**
+     * @var
+     */
+    public $body;
 
-	/**
-	 * @var
-	 */
-	private $messageId;
+    /**
+     * @var
+     */
+    public $id;
 
-	/**
-	 * Attachment constructor.
-	 *
-	 * @param $singleMessageId
-	 * @param  \Google_Service_Gmail_MessagePart  $part
-	 * @param  \Google_Service_Gmail_MessagePart  $part
-	 * @param  int 	$userId
-	 */
-	public function __construct($singleMessageId, \Google_Service_Gmail_MessagePart $part, $userId = null)
-	{
-		parent::__construct(config(), $userId);
+    /**
+     * @var
+     */
+    public $filename;
 
-		$this->service = new Google_Service_Gmail($this);
+    /**
+     * @var
+     */
+    public $mimeType;
 
-		$body = $part->getBody();
-		$this->id = $body->getAttachmentId();
-		$this->size = $body->getSize();
-		$this->filename = $part->getFilename();
-		$this->mimeType = $part->getMimeType();
-		$this->messageId = $singleMessageId;
-		$headers = $part->getHeaders();
-		$this->headerDetails = $this->getHeaderDetails($headers);
-	}
+    /**
+     * @var
+     */
+    public $size;
 
-	/**
-	 * Retuns attachment ID
-	 *
-	 * @return string
-	 */
-	public function getId()
-	{
-		return $this->id;
-	}
+    /**
+     * @var
+     */
+    public $headerDetails;
 
-	/**
-	 * Returns attachment file name
-	 *
-	 * @return string
-	 */
-	public function getFileName()
-	{
-		return $this->filename;
-	}
+    /**
+     * @var
+     */
+    private $headers;
 
-	/**
-	 * Returns mime type of the attachment
-	 *
-	 * @return string
-	 */
-	public function getMimeType()
-	{
-		return $this->mimeType;
-	}
+    /**
+     * @var \Google_Service_Gmail
+     */
+    private $service;
 
-	/**
-	 * Returns approximate size of the attachment
-	 *
-	 * @return mixed
-	 */
-	public function getSize()
-	{
-		return $this->size;
-	}
+    /**
+     * @var
+     */
+    private $messageId;
 
-	/**
-	 * @param  string  $path
-	 * @param  string|null  $filename
-	 *
-	 * @param  string  $disk
-	 *
-	 * @return string
-	 * @throws \Exception
-	 */
-	public function saveAttachmentTo($path = null, $filename = null, $disk = 'local')
-	{
+    /**
+     * Attachment constructor.
+     *
+     * @param $singleMessageId
+     * @param  \Google_Service_Gmail_MessagePart  $part
+     * @param  \Google_Service_Gmail_MessagePart  $part
+     * @param  int|null         $userId
+     * @param int|string|null   $jsonFileName
+     */
+    public function __construct($singleMessageId, \Google_Service_Gmail_MessagePart $part, $userId = null, $jsonFileName = null)
+    {
+        parent::__construct(config(), $userId, $jsonFileName);
 
-		$data = $this->getDecodedBody($this->getData());
+        $this->service = new \Google_Service_Gmail($this);
 
-		if (!$data) {
-			throw new \Exception('Could not get the attachment.');
-		}
+        $body                = $part->getBody();
+        $this->id            = $body->getAttachmentId();
+        $this->size          = $body->getSize();
+        $this->filename      = $part->getFilename();
+        $this->mimeType      = $part->getMimeType();
+        $this->messageId     = $singleMessageId;
+        $headers             = $part->getHeaders();
+        $this->headerDetails = $this->getHeaderDetails($headers);
+    }
 
-		$filename = $filename ?: $this->filename;
+    /**
+     * Retuns attachment ID
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
-		if (is_null($path)) {
-			$path = '/';
-		} else {
-			if (!Str::endsWith('/', $path)) {
-				$path = "{$path}/";
-			}
-		}
+    /**
+     * Returns attachment file name
+     *
+     * @return string
+     */
+    public function getFileName()
+    {
+        return $this->filename;
+    }
 
-		$filePathAndName = "{$path}{$filename}";
+    /**
+     * Returns mime type of the attachment
+     *
+     * @return string
+     */
+    public function getMimeType()
+    {
+        return $this->mimeType;
+    }
 
-		Storage::disk($disk)->put($filePathAndName, $data);
+    /**
+     * Returns approximate size of the attachment
+     *
+     * @return mixed
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
 
-		return $filePathAndName;
+    /**
+     * @param  string  $path
+     * @param  string|null  $filename
+     *
+     * @param  string  $disk
+     *
+     * @throws \Exception
+     * @return string
+     */
+    public function saveAttachmentTo($path = null, $filename = null, $disk = 'local')
+    {
 
-	}
+        $data = $this->getDecodedBody($this->getData());
 
-	/**
-	 * @throws \Exception
-	 */
-	public function getData()
-	{
-		$attachment = $this->service->users_messages_attachments->get('me', $this->messageId, $this->id);
+        if ( ! $data) {
+            throw new \Exception('Could not get the attachment.');
+        }
 
-		return $attachment->getData();
-	}
+        $filename = $filename ?: $this->filename;
 
-	/**
-	 * Returns attachment headers
-	 * Contains Content-ID and X-Attachment-Id for embedded images
-	 *
-	 * @return array
-	 */
-	public function getHeaderDetails($headers)
-	{
-		$headerDetails = [];
+        if (is_null($path)) {
+            $path = '/';
+        }
+        else {
+            if ( ! Str::endsWith('/', $path)) {
+                $path = "{$path}/";
+            }
+        }
 
-		foreach ($headers as $header) {
-			$headerDetails[$header->name] = $header->value;
-		}
+        $filePathAndName = "{$path}{$filename}";
 
-		return $headerDetails;
-	}
+        Storage::disk($disk)->put($filePathAndName, $data);
+
+        return $filePathAndName;
+
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getData()
+    {
+        $attachment = $this->service->users_messages_attachments->get('me', $this->messageId, $this->id);
+
+        return $attachment->getData();
+    }
+
+    /**
+     * Returns attachment headers
+     * Contains Content-ID and X-Attachment-Id for embedded images
+     *
+     * @return array
+     */
+    public function getHeaderDetails($headers)
+    {
+        $headerDetails = [];
+
+        foreach ($headers as $header) {
+            $headerDetails[$header->name] = $header->value;
+        }
+
+        return $headerDetails;
+    }
 }

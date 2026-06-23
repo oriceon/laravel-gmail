@@ -8,6 +8,7 @@ use Dacastro4\LaravelGmail\Traits\HasDecodableBody;
 use Dacastro4\LaravelGmail\Traits\HasParts;
 use Dacastro4\LaravelGmail\Traits\Modifiable;
 use Dacastro4\LaravelGmail\Traits\Replyable;
+use Google\Service\Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -38,6 +39,11 @@ class Mail extends GmailConnection
      * @var
      */
     public $jsonFileName;
+
+    /**
+     * @var
+     */
+    public $configData;
 
     /**
      * @var
@@ -79,21 +85,24 @@ class Mail extends GmailConnection
     /**
      * SingleMessage constructor.
      *
-     * @param \Google_Service_Gmail_Message $message
+     * @param \Google_Service_Gmail_Message|null $message
      * @param bool $preload
-     * @param  int|null         $userId
-     * @param int|string|null   $jsonFileName
+     * @param null $userId
+     * @param null $jsonFileName
+     * @param array $configData
+     * @throws Exception
      */
-    public function __construct(?\Google_Service_Gmail_Message $message = null, $preload = false, $userId = null, $jsonFileName = null)
+    public function __construct(?\Google_Service_Gmail_Message $message = null, $preload = false, $userId = null, $jsonFileName = null, array $configData = [])
     {
         $this->service = new \Google_Service_Gmail($this);
 
         $this->userId       = $userId;
         $this->jsonFileName = $jsonFileName;
+        $this->configData   = $configData;
 
         $this->__rConstruct();
         $this->__mConstruct();
-        parent::__construct(config(), $userId, $jsonFileName);
+        parent::__construct(config(), $userId, $jsonFileName, $configData);
 
         if ( ! is_null($message)) {
             if ($preload) {
@@ -539,7 +548,7 @@ class Mail extends GmailConnection
 
         foreach ($parts as $part) {
             if ( ! empty($part->body->attachmentId)) {
-                $attachment = (new Attachment($part->body->attachmentId, $part, $this->userId, $this->jsonFileName));
+                $attachment = (new Attachment($part->body->attachmentId, $part, $this->userId, $this->jsonFileName, $this->configData));
 
                 if ($preload) {
                     $attachment = $attachment->getData();

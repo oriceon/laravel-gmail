@@ -31,6 +31,8 @@ class GmailConnection extends \Google_Client
 
     public $jsonFileName;
 
+    public $configData;
+
     public function __construct($config = null, $userId = null, $jsonFileName = null, array $configData = [])
     {
         $this->app = Container::getInstance();

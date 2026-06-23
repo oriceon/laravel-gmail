@@ -16,14 +16,24 @@ trait Configurable
 
     public $jsonFileName;
 
-    public function __construct($config, $jsonFileName = null)
+    public $configData;
+
+    public function __construct($config, $jsonFileName = null, array $configData = [])
     {
         $this->_config      = $config;
         $this->jsonFileName = $jsonFileName;
+        $this->configData   = $configData;
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function config($string = null)
     {
+        if (count($this->configData) > 0) {
+            return $this->configData;
+        }
+
         $disk             = Storage::disk('local');
         $fileName         = $this->getFileName();
         $file             = "gmail/tokens/{$fileName}.json";
@@ -31,10 +41,10 @@ trait Configurable
 
         if ($disk->exists($file)) {
             if ($allowJsonEncrypt) {
-                $config = json_decode(decrypt($disk->get($file)), true);
+                $config = json_decode(decrypt($disk->get($file)), true, 512, JSON_THROW_ON_ERROR);
             }
             else {
-                $config = json_decode($disk->get($file), true);
+                $config = json_decode($disk->get($file), true, 512, JSON_THROW_ON_ERROR);
             }
 
             if ($string) {
@@ -45,10 +55,7 @@ trait Configurable
             else {
                 return $config;
             }
-
         }
-
-
     }
 
     private function getFileName()

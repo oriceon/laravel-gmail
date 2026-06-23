@@ -31,13 +31,13 @@ class GmailConnection extends \Google_Client
 
     public $jsonFileName;
 
-    public function __construct($config = null, $userId = null, $jsonFileName = null)
+    public function __construct($config = null, $userId = null, $jsonFileName = null, array $configData = [])
     {
         $this->app = Container::getInstance();
 
         $this->userId = $userId;
 
-        $this->configConstruct($config, $jsonFileName);
+        $this->configConstruct($config, $jsonFileName, $configData);
 
         $this->configuration = $config;
 

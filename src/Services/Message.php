@@ -6,6 +6,7 @@ use Dacastro4\LaravelGmail\LaravelGmailClass;
 use Dacastro4\LaravelGmail\Services\Message\Mail;
 use Dacastro4\LaravelGmail\Traits\Filterable;
 use Dacastro4\LaravelGmail\Traits\SendsParameters;
+use Google\Service\Exception;
 
 class Message
 {
@@ -76,7 +77,7 @@ class Message
 
         if ( ! $this->preload) {
             foreach ($messages as $message) {
-                $mails[] = new Mail($message, $this->preload, $this->client->userId, $this->client->jsonFileName);
+                $mails[] = new Mail($message, $this->preload, $this->client->userId, $this->client->jsonFileName, $this->client->configData);
             }
         }
         else {
@@ -119,7 +120,7 @@ class Message
     {
         $message = $this->getRequest($id);
 
-        return new Mail($message, false, $this->client->userId, $this->client->jsonFileName);
+        return new Mail($message, false, $this->client->userId, $this->client->jsonFileName, $this->client->configData);
     }
 
     /**
@@ -127,6 +128,7 @@ class Message
      *
      * @param $allMessages
      *
+     * @throws Exception
      * @return array|null
      */
     public function batchRequest($allMessages)
@@ -147,7 +149,7 @@ class Message
 
         foreach ($messagesBatch as $message) {
             if ($message instanceof \Google_Service_Gmail_Message) {
-                $messages[] = new Mail($message, false, $this->client->userId, $this->client->jsonFileName);
+                $messages[] = new Mail($message, false, $this->client->userId, $this->client->jsonFileName, $this->client->configData);
             }
             elseif ($message instanceof \Google\Service\Exception) {
                 // skip errors from batch, continue process
